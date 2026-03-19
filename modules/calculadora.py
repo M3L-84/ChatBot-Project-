@@ -1,77 +1,102 @@
 import sqlite3
+import os
 
 def buscar_produtos_no_banco():
     """Conecta ao banco de dados e retorna a lista de produtos com preços e descontos."""
-    conn = sqlite3.connect('pinkchat.db')
-    cursor = conn.cursor()
-    # Busca Nome, Preço Original e Preço com Desconto
-    cursor.execute('SELECT nome, preco, (preco * (1 - desconto)) FROM produtos')
-    resultados = cursor.fetchall()
-    conn.close()
-    return resultados
+    # Garante o caminho correto para o banco na raiz
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    caminho_db = os.path.join(BASE_DIR, 'pinkchat.db')
+    
+    try:
+        conn = sqlite3.connect(caminho_db)
+        cursor = conn.cursor()
+        # Busca Nome, Preço Original e a porcentagem de desconto (ex: 0.10)
+        cursor.execute('SELECT nome, preco, desconto FROM produtos')
+        resultados = cursor.fetchall()
+        conn.close()
+        return resultados
+    except sqlite3.Error as e:
+        print(f"⚠️ Erro ao acessar o banco de dados: {e}")
+        return []
 
 def realizar_orcamento():
-    """
-    Executa a lógica de seleção de produtos e cálculo de subtotal.
-    Retorna uma lista de dicionários com os itens do carrinho.
-    """
+    """Executa a lógica de seleção de produtos no terminal."""
     carrinho = []
+    produtos = buscar_produtos_no_banco()
+    
+    if not produtos:
+        print("⚠️ Nenhum produto encontrado no banco.")
+        return []
+
     while True:
-        print("\n--- PRODUTOS E ORÇAMENTO ---")
-        produtos = buscar_produtos_no_banco()
-        
+        print("\n" + "="*45)
+        print(f"{'TABELA DE PRODUTOS SALVAR-SE':^45}")
+        print("="*45)
         for i, p in enumerate(produtos, 1):
-            print(f" {i}. {p[0]} - R$ {p[2]:.2f}")
+            # p[0]=nome, p[1]=preco_cheio
+            print(f" {i:2}. {p[0]:.<30} R$ {p[1]:>8.2f}")
         
-        print("0. Finalizar orçamento e retornar")
+        print(f" 0. {'Finalizar seleções e ver resumo':.<30}")
+        print("="*45)
         
         try:
-            sub_escolha = int(input("\nEscolha o produto ou 0 para sair: "))
-            if sub_escolha == 0: 
-                break
+            escolha = int(input("\nEscolha o número do produto (ou 0 para sair): "))
+            if escolha == 0: break
             
-            if 1 <= sub_escolha <= len(produtos):
-                p_sel = produtos[sub_escolha-1]
-                nome_produto = p_sel[0]
-                preco_unitario = p_sel[2]
-                
-                qtd = int(input(f"Quantidade de '{nome_produto}'? (Máx 6): "))
+            if 1 <= escolha <= len(produtos):
+                p_sel = produtos[escolha-1]
+                qtd = int(input(f"Quantidade de '{p_sel[0]}'? (Máx 6): "))
                 
                 if 1 <= qtd <= 6:
                     carrinho.append({
-                        "nome": nome_produto, 
+                        "nome": p_sel[0], 
                         "qtd": qtd, 
-                        "subtotal": preco_unitario * qtd
+                        "preco_original": p_sel[1],
+                        "desconto_percentual": p_sel[2]
                     })
-                    print(f"✅ {qtd}x {nome_produto} adicionado!")
+                    print(f"✅ Adicionado: {qtd}x {p_sel[0]}")
                 else:
-                    print("⚠️ Limite de 6 unidades por produto excedido.")
+                    print("⚠️ Quantidade permitida: 1 a 6 unidades.")
             else:
-                print("⚠️ Opção inválida. Escolha um número da lista.")
-                
+                print("⚠️ Opção inválida.")
         except ValueError:
-            print("⚠️ Erro: Digite apenas números inteiros.")
+            print("⚠️ Digite apenas números.")
             
     return carrinho
 
 def exibir_resumo(carrinho):
-    """Formata e exibe o resumo visual do orçamento final."""
+    """Exibe o resumo conforme solicitado: Total, Com Desconto e Economia."""
     if not carrinho:
-        print("\nNenhum item selecionado para orçamento.")
+        print("\n[!] Nenhum item selecionado.")
         return
 
-    print("\n" + "="*40)
-    print("         RESUMO DO ORÇAMENTO")
-    print("="*40)
-    total_geral = 0
-    for item in carrinho:
-        print(f"{item['qtd']}x {item['nome']:.<25} R$ {item['subtotal']:>8.2f}")
-        total_geral += item['subtotal']
+    print("\n" + "─"*45)
+    print(f"{'RESUMO DO SEU PEDIDO':^45}")
+    print("─"*45)
     
-    print("-" * 40)
-    print(f"TOTAL GERAL: {' ':<18} R$ {total_geral:>8.2f}")
-    # Usando o cupom salvar10, o cliente tem 10% de desconto no total
-    desconto = total_geral * 0.10
-    print(f"DESCONTO (salvar10): {' ':<11} R$ {desconto:>8.2f}")
-    print(f"TOTAL COM DESCONTO: {' ':<7} R$ {total_geral - desconto:>8.2f}")
-    print("="*40)
+    total_bruto_geral = 0
+    total_com_desconto_geral = 0
+    
+    for item in carrinho:
+        # Cálculos por item
+        subtotal_bruto = item['qtd'] * item['preco_original']
+        valor_desconto = subtotal_bruto * item['desconto_percentual']
+        subtotal_com_desconto = subtotal_bruto - valor_desconto
+        
+        # Exibição individual conforme o exemplo: 2 Óleo de CBD 25mg/ml = 630,00
+        print(f"{item['qtd']} {item['nome']} = {subtotal_bruto:.2f}")
+        print(f"Com 10% de desconto = {subtotal_com_desconto:.2f}")
+        print(f"Economia de - {valor_desconto:.2f} R$")
+        print("-" * 20)
+        
+        total_bruto_geral += subtotal_bruto
+        total_com_desconto_geral += subtotal_com_desconto
+
+    if len(carrinho) > 1:
+        economia_total = total_bruto_geral - total_com_desconto_geral
+        print(f"\n{'TOTAL DO ORÇAMENTO':^45}")
+        print(f"Valor Total Bruto: {' ':<12} R$ {total_bruto_geral:>8.2f}")
+        print(f"Total com Desconto: {' ':<11} R$ {total_com_desconto_geral:>8.2f}")
+        print(f"ECONOMIA TOTAL: {' ':<15} R$ {economia_total:>8.2f}")
+    
+    print("─"*45)

@@ -4,7 +4,7 @@ import pytz
 from datetime import datetime
 from dotenv import load_dotenv
 from google import genai
-from calculadora import realizar_orcamento, exibir_resumo
+from modules.calculadora import realizar_orcamento, exibir_resumo
 
 load_dotenv()
 chave = os.getenv("GOOGLE_API_KEY")
