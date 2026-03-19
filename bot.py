@@ -84,37 +84,35 @@ if __name__ == "__main__":
 
                     for i, p in enumerate(produtos, 1):
                         print(f" {i}. {p[0]} - R$ {p[2]:.2f} (unidade)")
-
-                    print("0. Finalizar orçamento e ver resumo")
+                    print("0. Finalizar orçamento e retornar ao Menu Principal")
                     
-                try:
-                    escolha = int(input("\nDigite o número do produto para orçamento ou 0 para fechar e retornar ao Menu Principal: "))
+                    try:
+                        escolha = int(input("\nDigite o número do produto para orçamento ou 0 para fechar e retornar ao Menu Principal: "))
                     
-                    if escolha == 0:
-                        print("\nVoltando ao menu...")
-                        break
+                        if escolha == 0:
+                            print("\nVoltando ao menu...")
+                            break
                     
-                    if 1 <= escolha <= len(produtos):
-                        produto_selecionado = produtos[escolha - 1]
-                        nome_produto = produto_selecionado[0]
-                        preco_produto = produto_selecionado[2]
-
-                        qtd = int(input(f"Digite a quantidade desejada de '{nome_produto}'? (Máx 6): ")) 
+                        if 1 <= escolha <= len(produtos):
+                            produto_selecionado = produtos[escolha - 1]
+                            nome_produto = produto_selecionado[0]
+                            preco_produto = produto_selecionado[2]
+                            qtd = int(input(f"Digite a quantidade desejada de '{nome_produto}'? (Máx 6): ")) 
                         
-                        if 1 <= qtd <= 6:
-                            carrinho.append({
-                                "nome": nome_produto,
-                                "qtd": qtd,
-                                "subtotal": preco_produto * qtd
-                            })
-                            print(f" {qtd}x '{nome_produto}' adicionado ao orçamento.")
+                            if 1 <= qtd <= 6:
+                                carrinho.append({
+                                    "nome": nome_produto,
+                                    "qtd": qtd,
+                                 "subtotal": preco_produto * qtd
+                                })
+                                print(f" {qtd}x '{nome_produto}' adicionado ao orçamento.")
+                            else:
+                                print("\n⚠️ Limite de 6 unidades por produto excedido ou valor inválido!")
+                                continue
                         else:
-                            print("\n⚠️ Limite de 6 unidades por produto excedido ou valor inválido!")
-                            continue
-                    else:
-                        print("\n⚠️ Opção inválida! Por favor, escolha um número válido da lista.")
+                            print("\n⚠️ Opção inválida! Por favor, escolha um número válido da lista.")
                               
-                except ValueError:
+                    except ValueError:
                         print("\n⚠️ Digite apenas números.")
                         
         # --- RESUMO DO ORÇAMENTO ---")
