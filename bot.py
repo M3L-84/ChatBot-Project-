@@ -1,14 +1,55 @@
 # bot.py
-
+import os
+import pytz
+from datetime import datetime
+from dotenv import load_dotenv
+from google import genai
 import sqlite3
+
+load_dotenv()
+chave = os.getenv("GOOGLE_API_KEY")
+
+# --- FUNÇÕES DE APOIO ---
+
+def obter_saudacao_por_horario():
+    fuso_br = pytz.timezone("America/Sao_Paulo")
+    hora_atual = datetime.now(fuso_br).hour
+    
+    if 5 <= hora_atual < 12:
+        return "Tenha um excelente dia! ☀️"
+    elif 12 <= hora_atual < 18:
+        return "Tenha uma ótima tarde! 🌤️"
+    else:
+        return "Tenha uma excelente noite! 🌙"
+
+def chamar_ia_pink_chat(perguntar_usuario):
+    if not chave:
+        return "Ops! Meu sistema de IA está descansando. Use o menu!"
+    try:
+        client = genai.Client(api_key=chave)
+        prompt = (
+            "Você é o assistente virtual da Salvar-se (Pink Chat). "
+            "Sua missão é ser acolhedor e informativo sobre Cannabis Medicinal. "
+            "Se não souber a resposta ou for algo complexo, oriente a falar com o suporte no menu 5."
+            "Mantenha respostas curtas, claras e amigáveis."
+        )
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=f"{prompt}\n\nPergunta do Cliente: {perguntar_usuario}"
+        )
+        return response.text
+    except Exception:
+        return "No momento só consigo responder pelas opções do menu (1 a 5)."
 
 def buscar_produtos_no_banco():
     conn = sqlite3.connect('pinkchat.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT nome, preco, (preco * (1 - desconto))FROM produtos')
+    cursor.execute('SELECT nome, preco, (preco * (1 - desconto)) FROM produtos')
     resultados = cursor.fetchall()
     conn.close()
     return resultados
+
+# --- CONTEÚDO ESTÁTICO ---
 
 CONTEUDO = {
     "1": {
@@ -19,30 +60,14 @@ CONTEUDO = {
             "1.3": "Admissão"
         }
     },
-
-    "2": {
-        "titulo": "Produtos",
-        "tabela": [
-            "Óleo de CBD 25mg/ml: R$ 315.00 - 10% = R$ 283.50",
-            "Óleo de CBD 50mg/ml: R$ 420.00 - 10% = R$ 378.00",
-            "Óleo de CBD/THC 1:1 25mg/ml: R$ 315.00 - 10% = R$ 283.50",
-            "Óleo de THC 25mg/ml: R$ 315.00 - 10% = R$ 283.50",
-            "Óleo de THC 5mg/ml: R$ 210.00 - 10% = R$ 189.00",
-            "Flores de THC (10g): R$ 420.00 - 10% = R$ 378.00 (White Widow e Zkittlez)",
-            "Flores de CBD (10g): R$ 280.00 - 10% = R$ 252.00 (Purple Punch)"
-        ]
-    },
-
     "3": "A mensalidade vence todo dia 10 de cada mês. A contribuição mensal é de 30.00 R$",
     "4": "O frete é calculado no momento da compra quando vc escolhe a empresa transportadora.",
-    "5": "Para cancelamento, envie um email para contato@salvar-se.org.br com o assunto 'Cancelamento' e "
-    "informe o motivo e em eguida e avisa no chat, para que a equipe do suporte realize o procedimento."
-    
+    "5": "Para cancelamento, envie um email para contato@salvar-se.org.br com o assunto 'Cancelamento' e informe o motivo."
 }
 
 def exibir_menu_principal():
     print("\n" + "="*30)
-    print("Bem-vindo ao Bot de Atendimento")
+    print("      PINK CHAT - SALVAR")
     print("="*30) 
     print("1. Cadastro")
     print("2. Produtos")
@@ -52,81 +77,76 @@ def exibir_menu_principal():
     print("0. Sair")
     print("="*30)
 
+# --- LOOP PRINCIPAL ---
+
 if __name__ == "__main__":
     while True:
         exibir_menu_principal()
+        escolha = input("Digite o número da opção ou sua dúvida: ")
 
-        # O input sempre recebe o que o usuário digitar como texto (string)
-        escolha = input("Digite o número da opção desejada ou digite 0 para sair: ")
-
+        # 0. SAÍDA COM SAUDAÇÃO DINÂMICA
         if escolha == "0":
-            print("\nA Salvar agradece e deseja um bom dia!")
+            saudacao = obter_saudacao_por_horario()
+            print(f"\n{saudacao}")
+            print("A Salvar agradece e deseja um bom dia! 👋")
             break
 
-        elif escolha in CONTEUDO:
-            # Pegamos o item do dicionário baseado no número digitado
-            item = CONTEUDO[escolha]
+        # 1. CADASTRO
+        elif escolha == "1":
+            item = CONTEUDO["1"]
+            print(f"\n--- {item['titulo']} ---")
+            for sub, desc in item["opcoes"].items():
+                print(f"{sub}: {desc}")
+            input("\nPressione ENTER para voltar...")
 
-            # Se for o item 1 (Cadastro), exibimos as opções de cadastro
-            if escolha == "1":
-                print(f"\n--- {item['titulo']} ---")
-                for opcao, descricao in item["opcoes"].items():
-                    print(f"{opcao}: {descricao}")
-            
-            # Se for o item 2 (Produtos), exibimos a tabela de produtos
-            elif escolha == "2":
-                carrinho = [] # Lista para armazenar os produtos selecionados para orçamento
-
-                while True:
-
-                    print("\n--- PRODUTOS E ORÇAMENTO ---")
-                    produtos = buscar_produtos_no_banco()
-
-                    for i, p in enumerate(produtos, 1):
-                        print(f" {i}. {p[0]} - R$ {p[2]:.2f} (unidade)")
-                    print("0. Finalizar orçamento e retornar ao Menu Principal")
+        # 2. PRODUTOS E ORÇAMENTO (SISTEMA DE CARRINHO)
+        elif escolha == "2":
+            carrinho = []
+            while True:
+                print("\n------ PRODUTOS E ORÇAMENTO ------")
+                produtos = buscar_produtos_no_banco()
+                for i, p in enumerate(produtos, 1):
+                    print(f" {i}. {p[0]} - R$ {p[2]:.2f}")
+                print("0. Finalizar orçamento e retornar")
+                
+                try:
+                    sub_escolha = int(input("\nEscolha o produto ou 0 para sair: "))
+                    if sub_escolha == 0: break
                     
-                    try:
-                        escolha = int(input("\nDigite o número do produto para orçamento ou 0 para fechar e retornar ao Menu Principal: "))
-                    
-                        if escolha == 0:
-                            print("\nVoltando ao menu...")
-                            break
-                    
-                        if 1 <= escolha <= len(produtos):
-                            produto_selecionado = produtos[escolha - 1]
-                            nome_produto = produto_selecionado[0]
-                            preco_produto = produto_selecionado[2]
-                            qtd = int(input(f"Digite a quantidade desejada de '{nome_produto}'? (Máx 6): ")) 
-                        
-                            if 1 <= qtd <= 6:
-                                carrinho.append({
-                                    "nome": nome_produto,
-                                    "qtd": qtd,
-                                 "subtotal": preco_produto * qtd
-                                })
-                                print(f" {qtd}x '{nome_produto}' adicionado ao orçamento.")
-                            else:
-                                print("\n⚠️ Limite de 6 unidades por produto excedido ou valor inválido!")
-                                continue
+                    if 1 <= sub_escolha <= len(produtos):
+                        p_sel = produtos[sub_escolha-1]
+                        qtd = int(input(f"Quantidade de '{p_sel[0]}'? (Máx 6): "))
+                        if 1 <= qtd <= 6:
+                            carrinho.append({"nome": p_sel[0], "qtd": qtd, "subtotal": p_sel[2] * qtd})
+                            print("✅ Adicionado!")
                         else:
-                            print("\n⚠️ Opção inválida! Por favor, escolha um número válido da lista.")
-                              
-                    except ValueError:
-                        print("\n⚠️ Digite apenas números.")
-                        
-        # --- RESUMO DO ORÇAMENTO ---")
-        if carrinho:
-            print("\n" + "="*40)
-            print(f"         RESUMO DO ORÇAMENTO:")
-            print("="*40)
-            total_final = 0
-            for item in carrinho:
-                 print(f"{item['qtd']}x {item['nome']:.<25} R$ {item['subtotal']:>8.2f}")
-                 total_geral += item['subtotal']
-            print("-" *40)
-            print(f"TOTAL GERAL: {' ':<18} R$ {total_geral:>8.2f}")
+                            print("⚠️ Máximo 6 unidades.")
+                    else:
+                        print("⚠️ Opção inválida.")
+                except ValueError:
+                    print("⚠️ Digite apenas números.")
+
+            if carrinho:
+                print("\n" + "="*40)
+                print("         RESUMO DO ORÇAMENTO")
+                print("="*40)
+                total = 0
+                for item_c in carrinho:
+                    print(f"{item_c['qtd']}x {item_c['nome']:.<25} R$ {item_c['subtotal']:>8.2f}")
+                    total += item_c['subtotal']
+                print("-" * 40)
+                print(f"TOTAL GERAL: {' ':<18} R$ {total:>8.2f}")
+                print("="*40)
+            input("\nPressione ENTER para continuar...")
+
+        # 3, 4 e 5. TEXTOS FIXOS
+        elif escolha in ["3", "4", "5"]:
+            print(f"\nINFORMAÇÃO: {CONTEUDO[escolha]}")
+            input("\nPressione ENTER para voltar...")
+
+        # FALLBACK PARA INTELIGÊNCIA ARTIFICIAL
         else:
-            print("\nNenhum item adicionado ao orçamento.")
-        input("\nPressione ENTER para voltar ao Menu Princial...")
-             
+            print("\n🤖 Consultando assistente IA...")
+            resposta = chamar_ia_pink_chat(escolha)
+            print(f"\n[IA Pink Chat]: {resposta}")
+            input("\nPressione ENTER para voltar...")
