@@ -4,7 +4,7 @@ import pytz
 from datetime import datetime
 from dotenv import load_dotenv
 from google import genai
-import sqlite3
+from calculadora import realizar_orcamento, exibir_resumo
 
 load_dotenv()
 chave = os.getenv("GOOGLE_API_KEY")
@@ -12,8 +12,11 @@ chave = os.getenv("GOOGLE_API_KEY")
 # --- FUNÇÕES DE APOIO ---
 
 def obter_saudacao_por_horario():
-    fuso_br = pytz.timezone("America/Sao_Paulo")
-    hora_atual = datetime.now(fuso_br).hour
+    try:
+        fuso_br = pytz.timezone("America/Sao_Paulo")
+        hora_atual = datetime.now(fuso_br).hour
+    except:
+        hora_atual = datetime.now().hour 
     
     if 5 <= hora_atual < 12:
         return "Tenha um excelente dia! ☀️"
@@ -41,14 +44,6 @@ def chamar_ia_pink_chat(perguntar_usuario):
     except Exception:
         return "No momento só consigo responder pelas opções do menu (1 a 5)."
 
-def buscar_produtos_no_banco():
-    conn = sqlite3.connect('pinkchat.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT nome, preco, (preco * (1 - desconto)) FROM produtos')
-    resultados = cursor.fetchall()
-    conn.close()
-    return resultados
-
 # --- CONTEÚDO ESTÁTICO ---
 
 CONTEUDO = {
@@ -69,12 +64,7 @@ def exibir_menu_principal():
     print("\n" + "="*30)
     print("      PINK CHAT - SALVAR")
     print("="*30) 
-    print("1. Cadastro")
-    print("2. Produtos")
-    print("3. Mensalidade")
-    print("4. Frete")
-    print("5. Cancelamento")
-    print("0. Sair")
+    print("1. Cadastro\n2. Produtos\n3. Mensalidade\n4. Frete\n5. Cancelamento\n0. Sair")
     print("="*30)
 
 # --- LOOP PRINCIPAL ---
@@ -88,56 +78,22 @@ if __name__ == "__main__":
         if escolha == "0":
             saudacao = obter_saudacao_por_horario()
             print(f"\n{saudacao}")
-            print("A Salvar agradece e deseja um bom dia! 👋")
             break
 
         # 1. CADASTRO
         elif escolha == "1":
             item = CONTEUDO["1"]
-            print(f"\n--- {item['titulo']} ---")
+            print(f"\n----- {item['titulo']} -----")
             for sub, desc in item["opcoes"].items():
                 print(f"{sub}: {desc}")
             input("\nPressione ENTER para voltar...")
 
-        # 2. PRODUTOS E ORÇAMENTO (SISTEMA DE CARRINHO)
+        # 2. PRODUTOS E ORÇAMENTO (Usando o novo módulo)
         elif escolha == "2":
-            carrinho = []
-            while True:
-                print("\n------ PRODUTOS E ORÇAMENTO ------")
-                produtos = buscar_produtos_no_banco()
-                for i, p in enumerate(produtos, 1):
-                    print(f" {i}. {p[0]} - R$ {p[2]:.2f}")
-                print("0. Finalizar orçamento e retornar")
-                
-                try:
-                    sub_escolha = int(input("\nEscolha o produto ou 0 para sair: "))
-                    if sub_escolha == 0: break
-                    
-                    if 1 <= sub_escolha <= len(produtos):
-                        p_sel = produtos[sub_escolha-1]
-                        qtd = int(input(f"Quantidade de '{p_sel[0]}'? (Máx 6): "))
-                        if 1 <= qtd <= 6:
-                            carrinho.append({"nome": p_sel[0], "qtd": qtd, "subtotal": p_sel[2] * qtd})
-                            print("✅ Adicionado!")
-                        else:
-                            print("⚠️ Máximo 6 unidades.")
-                    else:
-                        print("⚠️ Opção inválida.")
-                except ValueError:
-                    print("⚠️ Digite apenas números.")
-
-            if carrinho:
-                print("\n" + "="*40)
-                print("         RESUMO DO ORÇAMENTO")
-                print("="*40)
-                total = 0
-                for item_c in carrinho:
-                    print(f"{item_c['qtd']}x {item_c['nome']:.<25} R$ {item_c['subtotal']:>8.2f}")
-                    total += item_c['subtotal']
-                print("-" * 40)
-                print(f"TOTAL GERAL: {' ':<18} R$ {total:>8.2f}")
-                print("="*40)
-            input("\nPressione ENTER para continuar...")
+            # Chamamos a lógica que está no arquivo calcularora.py
+            carrinho = realizar_orcamento()
+            exibir_resumo(carrinho)
+            input("\nPressione ENTER para voltar...")
 
         # 3, 4 e 5. TEXTOS FIXOS
         elif escolha in ["3", "4", "5"]:
