@@ -1,14 +1,50 @@
 # bot.py
+import os
+import pytz
+from datetime import datetime
+from dotenv import load_dotenv
+from google import genai
+from modules.calculadora import realizar_orcamento, exibir_resumo
 
-import sqlite3
+load_dotenv()
+chave = os.getenv("GOOGLE_API_KEY")
 
-def buscar_produtos_no_banco():
-    conn = sqlite3.connect('pinkchat.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT nome, preco, (preco * (1 - desconto))FROM produtos')
-    resultados = cursor.fetchall()
-    conn.close()
-    return resultados
+# --- FUNÇÕES DE APOIO ---
+
+def obter_saudacao_por_horario():
+    try:
+        fuso_br = pytz.timezone("America/Sao_Paulo")
+        hora_atual = datetime.now(fuso_br).hour
+    except:
+        hora_atual = datetime.now().hour 
+    
+    if 5 <= hora_atual < 12:
+        return "Tenha um excelente dia! ☀️"
+    elif 12 <= hora_atual < 18:
+        return "Tenha uma ótima tarde! 🌤️"
+    else:
+        return "Tenha uma excelente noite! 🌙"
+
+def chamar_ia_pink_chat(perguntar_usuario):
+    if not chave:
+        return "Ops! Meu sistema de IA está descansando. Use o menu!"
+    try:
+        client = genai.Client(api_key=chave)
+        prompt = (
+            "Você é o assistente virtual da Salvar-se (Pink Chat). "
+            "Sua missão é ser acolhedor e informativo sobre Cannabis Medicinal. "
+            "Se não souber a resposta ou for algo complexo, oriente a falar com o suporte no menu 5."
+            "Mantenha respostas curtas, claras e amigáveis."
+        )
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=f"{prompt}\n\nPergunta do Cliente: {perguntar_usuario}"
+        )
+        return response.text
+    except Exception:
+        return "No momento só consigo responder pelas opções do menu (1 a 5)."
+
+# --- CONTEÚDO ESTÁTICO ---
 
 CONTEUDO = {
     "1": {
@@ -19,73 +55,54 @@ CONTEUDO = {
             "1.3": "Admissão"
         }
     },
-
-    "2": {
-        "titulo": "Produtos",
-        "tabela": [
-            "Óleo de CBD 25mg/ml: R$ 315.00 - 10% = R$ 283.50",
-            "Óleo de CBD 50mg/ml: R$ 420.00 - 10% = R$ 378.00",
-            "Óleo de CBD/THC 1:1 25mg/ml: R$ 315.00 - 10% = R$ 283.50",
-            "Óleo de THC 25mg/ml: R$ 315.00 - 10% = R$ 283.50",
-            "Óleo de THC 5mg/ml: R$ 210.00 - 10% = R$ 189.00",
-            "Flores de THC (10g): R$ 420.00 - 10% = R$ 378.00 (White Widow e Zkittlez)",
-            "Flores de CBD (10g): R$ 280.00 - 10% = R$ 252.00 (Purple Punch)"
-        ]
-    },
-
     "3": "A mensalidade vence todo dia 10 de cada mês. A contribuição mensal é de 30.00 R$",
     "4": "O frete é calculado no momento da compra quando vc escolhe a empresa transportadora.",
-    "5": "Para cancelamento, envie um email para contato@salvar-se.org.br com o assunto 'Cancelamento' e "
-    "informe o motivo e em eguida e avisa no chat, para que a equipe do suporte realize o procedimento."
-    
+    "5": "Para cancelamento, envie um email para contato@salvar-se.org.br com o assunto 'Cancelamento' e informe o motivo."
 }
 
 def exibir_menu_principal():
     print("\n" + "="*30)
-    print("Bem-vindo ao Bot de Atendimento")
+    print("      PINK CHAT - SALVAR")
     print("="*30) 
-    print("1. Cadastro")
-    print("2. Produtos")
-    print("3. Mensalidade")
-    print("4. Frete")
-    print("5. Cancelamento")
-    print("0. Sair")
+    print("1. Cadastro\n2. Produtos\n3. Mensalidade\n4. Frete\n5. Cancelamento\n0. Sair")
     print("="*30)
+
+# --- LOOP PRINCIPAL ---
 
 if __name__ == "__main__":
     while True:
         exibir_menu_principal()
+        escolha = input("Digite o número da opção ou sua dúvida: ")
 
-        # O input sempre recebe o que o usuário digitar como texto (string)
-        escolha = input("Digite o número da opção desejada ou digite 0 para sair: ")
-
+        # 0. SAÍDA COM SAUDAÇÃO DINÂMICA
         if escolha == "0":
-            print("\nA Salvar agradece e deseja um bom dia!")
+            saudacao = obter_saudacao_por_horario()
+            print(f"\n{saudacao}")
             break
 
-        elif escolha in CONTEUDO:
-            # Pegamos o item do dicionário baseado no número digitado
-            item = CONTEUDO[escolha]
+        # 1. CADASTRO
+        elif escolha == "1":
+            item = CONTEUDO["1"]
+            print(f"\n----- {item['titulo']} -----")
+            for sub, desc in item["opcoes"].items():
+                print(f"{sub}: {desc}")
+            input("\nPressione ENTER para voltar...")
 
-            # Se for o item 1 (Cadastro), exibimos as opções de cadastro
-            if escolha == "1":
-                print(f"\n--- {item['titulo']} ---")
-                for opcao, descricao in item["opcoes"].items():
-                    print(f"{opcao}: {descricao}")
-            
-            # Se for o item 2 (Produtos), exibimos a tabela de produtos
-            elif escolha == "2":
-                print("\n--- TABELA DE PRODUTOS (VIA BANCO DE DADOS) ---")
-                produtos = buscar_produtos_no_banco()
-                for p in produtos:
-                    print(f"• {p[0]}: R$ {p[1]:.2f} - 10% OFF = R$ {p[2]:.2f}")
+        # 2. PRODUTOS E ORÇAMENTO (Usando o novo módulo)
+        elif escolha == "2":
+            # Chamamos a lógica que está no arquivo calcularora.py
+            carrinho = realizar_orcamento()
+            exibir_resumo(carrinho)
+            input("\nPressione ENTER para voltar...")
 
-            # Para os itens 3, 4 e 5, exibimos o texto diretamente
-            else:
-                print(f"\n--- {item} ---")
+        # 3, 4 e 5. TEXTOS FIXOS
+        elif escolha in ["3", "4", "5"]:
+            print(f"\nINFORMAÇÃO: {CONTEUDO[escolha]}")
+            input("\nPressione ENTER para voltar...")
 
+        # FALLBACK PARA INTELIGÊNCIA ARTIFICIAL
         else:
-            print("\n⚠️ Opção inválida! Por favor, escolha um número do menu.")
-
-        # Pequena pausa visual antes de mostrar o menu novamente.
-        input("\nPressione Enter para continuar...")
+            print("\n🤖 Consultando assistente IA...")
+            resposta = chamar_ia_pink_chat(escolha)
+            print(f"\n[IA Pink Chat]: {resposta}")
+            input("\nPressione ENTER para voltar...")
