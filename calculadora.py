@@ -70,4 +70,8 @@ def exibir_resumo(carrinho):
     
     print("-" * 40)
     print(f"TOTAL GERAL: {' ':<18} R$ {total_geral:>8.2f}")
+    # Usando o cupom salvar10, o cliente tem 10% de desconto no total
+    desconto = total_geral * 0.10
+    print(f"DESCONTO (salvar10): {' ':<11} R$ {desconto:>8.2f}")
+    print(f"TOTAL COM DESCONTO: {' ':<7} R$ {total_geral - desconto:>8.2f}")
     print("="*40)
