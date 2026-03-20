@@ -1,6 +1,5 @@
 import sqlite3
 import os
-import sys
 
 # Localiza a raiz do projeto (/workspaces/ChatBot-Project-)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
