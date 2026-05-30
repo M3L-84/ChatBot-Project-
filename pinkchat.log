@@ -1,3 +1,54 @@
 2026-05-29 20:52:22 [ERROR] modules.calculadora: Erro ao acessar banco de dados: no such table: produtos
 2026-05-29 20:56:34 [ERROR] modules.calculadora: Erro ao acessar banco de dados: no such table: produtos
 2026-05-29 20:58:09 [ERROR] modules.calculadora: Erro ao acessar banco de dados: no such table: produtos
+2026-05-30 14:01:34 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-30 14:01:34 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-05-30 14:01:34 [INFO] werkzeug:  * Restarting with stat
+2026-05-30 14:01:35 [WARNING] werkzeug:  * Debugger is active!
+2026-05-30 14:01:35 [INFO] werkzeug:  * Debugger PIN: 628-475-248
+2026-05-30 14:09:57 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-30 14:09:57 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-05-30 14:09:57 [INFO] werkzeug:  * Restarting with stat
+2026-05-30 14:09:58 [WARNING] werkzeug:  * Debugger is active!
+2026-05-30 14:09:58 [INFO] werkzeug:  * Debugger PIN: 628-475-248
+2026-05-30 14:29:51 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:29:51] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:35:27 [INFO] werkzeug:  * Detected change in 'C:\\Users\\User\\Documents\\GitHub\\ChatBot-Project-\\whatsapp_server.py', reloading
+2026-05-30 14:35:27 [INFO] werkzeug:  * Restarting with stat
+2026-05-30 14:35:28 [WARNING] werkzeug:  * Debugger is active!
+2026-05-30 14:35:28 [INFO] werkzeug:  * Debugger PIN: 628-475-248
+2026-05-30 14:35:47 [INFO] werkzeug: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-05-30 14:35:47 [INFO] werkzeug: [33mPress CTRL+C to quit[0m
+2026-05-30 14:35:47 [INFO] werkzeug:  * Restarting with stat
+2026-05-30 14:35:48 [WARNING] werkzeug:  * Debugger is active!
+2026-05-30 14:35:48 [INFO] werkzeug:  * Debugger PIN: 628-475-248
+2026-05-30 14:35:57 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:35:57] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:36:18 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:36:18] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:36:26 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:36:26] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:36:37 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:36:37] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:36:49 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:36:49] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:36:54 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:36:54] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:37:01 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:37:01] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:37:13 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:37:13] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:37:20 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:37:20] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:37:23 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:37:23] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:37:31 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:37:31] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:37:37 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:37:37] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:37:55 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:37:55] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:38:00 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:38:00] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:38:09 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:38:09] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:38:29 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:38:29] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:38:40 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:38:40] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:38:45 [INFO] werkzeug: 127.0.0.1 - - [30/May/2026 14:38:45] "POST /webhook HTTP/1.1" 200 -
+2026-05-30 14:59:49 [INFO] werkzeug:  * Detected change in 'C:\\Users\\User\\Documents\\GitHub\\ChatBot-Project-\\whatsapp_server.py', reloading
+2026-05-30 14:59:49 [INFO] werkzeug:  * Restarting with stat
+2026-05-30 14:59:50 [WARNING] werkzeug:  * Debugger is active!
+2026-05-30 14:59:50 [INFO] werkzeug:  * Debugger PIN: 628-475-248
+2026-05-30 15:01:59 [INFO] werkzeug:  * Detected change in 'C:\\Users\\User\\Documents\\GitHub\\ChatBot-Project-\\whatsapp_server.py', reloading
+2026-05-30 15:01:59 [INFO] werkzeug:  * Restarting with stat
+2026-05-30 15:02:00 [WARNING] werkzeug:  * Debugger is active!
+2026-05-30 15:02:00 [INFO] werkzeug:  * Debugger PIN: 628-475-248
+2026-05-30 15:02:47 [INFO] werkzeug:  * Detected change in 'C:\\Users\\User\\Documents\\GitHub\\ChatBot-Project-\\whatsapp_server.py', reloading
+2026-05-30 15:02:47 [INFO] werkzeug:  * Restarting with stat
