@@ -42,16 +42,67 @@ CONTEUDO = {
     "1": {
         "titulo": "Cadastro",
         "opcoes": {
-            "1.1": "Não fiz cadastro",
-            "1.2": "Já sou cadastrado",
-            "1.3": "Admissão",
+            "[1]": "Passo a passo",
+            "[2]": "Já sou cadastrado",
+            "[3]": "Admissão",
+            "[0]": "Voltar ao menu principal",
+        },
+        "detalhes": {
+            "[1]": (
+                "Agradecemos pelo seu interesse em se associar à Salvar-se!\n\n"
+                "Para adquirir os produtos da sua receita, siga os passos abaixo:\n\n"
+                "1. Acesse o site: https://acesso.salvar-se.org.br/AreaAssociados\n\n"
+                "2. Cadastro: abaixo de 'Recuperar minha senha', clique em 'Cadastre-se' "
+                "e preencha o formulário com seus dados pessoais.\n\n"
+                "3. Documentação necessária:\n"
+                "   • Receita médica indicando o uso de óleo e/ou flor\n"
+                "   • Laudo médico\n"
+                "   • Comprovante de residência\n"
+                "   • RG\n"
+                "   • Termo de Ajuizamento (disponível para download no formulário)\n\n"
+                "4. Revisão e aprovação: nossa equipe analisará seus documentos e, "
+                "após aprovação, você se tornará um associado.\n\n"
+                "5. Escolha dos produtos: acesse a Área do Associado e consulte "
+                "os produtos disponíveis para compra.\n\n"
+                "6. Mensalidade: R$ 30,00/mês. Produtos a partir de R$ 210,00. "
+                "Pagamento via PIX, cartão ou boleto.\n\n"
+                "7. Aquisição: com a mensalidade em dia, selecione e adquira seus "
+                "produtos diretamente na Área do Associado.\n\n"
+                "Ficou com dúvidas? Nossa equipe está disponível neste canal.\n\n"
+                "Sobre o Termo de Ajuizamento:\n"
+                "É a autorização do associado para ingresso em ações coletivas "
+                "relacionadas ao cultivo da Associação."
+            ),
+            "[2]": (
+                "Por gentileza, informe o nome, CPF ou número de associado para que "
+                "possamos localizar o seu cadastro e iniciar o processo de admissão."
+            ),
         },
     },
-    "3": "A mensalidade vence todo dia 10 de cada mês. A contribuição mensal é de R$ 30,00.",
-    "4": "O frete é calculado no momento da compra quando você escolhe a empresa transportadora.",
-    "5": "Para cancelamento, envie um e-mail para contato@salvar-se.org.br com o assunto 'Cancelamento' e informe o motivo.",
+    "3": (
+        "A mensalidade vence todo dia 10 de cada mês e o valor é de R$ 30,00. "
+        "É necessário estar com a mensalidade em dia para realizar pedidos. "
+        "Optamos pelo plano mensal com o objetivo de facilitar o acesso a todos os públicos."
+    ),
+    "4": (
+        "O frete é calculado no momento da compra, ao escolher a transportadora. "
+        "O prazo para expedição é de 5 dias úteis após a confirmação do pedido.\n\n"
+        "Acompanhamento do pedido — os status seguem esta ordem:\n"
+        "  Pago → Atendido → Em preparação → Expedido\n\n"
+        "Após a atualização para 'Expedido', o código de rastreio será enviado "
+        "para o seu e-mail. Você também pode acompanhar em: Área do Associado > Histórico de Pedidos.\n\n"
+        "Transportadoras parceiras:\n"
+        "  • JADLOG (códigos iniciados em 18): https://www.jadlog.com.br/jadlog/captcha\n"
+        "  • AZUL LOGÍSTICA (demais códigos): https://www.azullogistica.com.br/Rastreio"
+    ),
+    "5": (
+        "\n• Para cancelamento, envie um e-mail para contato@salvar-se.org.br "
+        "com o assunto 'Cancelamento' e informe o motivo.\n "
+        "• Após o envio, informe ao suporte, que executarão o procedimento.\n "
+        "• Não será cobrada multa ou taxa, independentemente de pendências.\n "
+        "• O cancelamento só será executado caso não haja envios em trânsito. "
+    ),
 }
-
 
 # ──────────────────────────────────────────────
 # Saudação dinâmica
@@ -124,11 +175,33 @@ def chamar_ia(pergunta: str) -> str:
 # ──────────────────────────────────────────────
 
 def handle_cadastro() -> None:
-    item = CONTEUDO["1"]
-    print(f"\n----- {item['titulo']} -----")
-    for sub, desc in item["opcoes"].items():
-        print(f"  {sub}: {desc}")
-    input("\nPressione ENTER para voltar...")
+    while True:
+        item = CONTEUDO["1"]
+        print(f"\n----- {item['titulo']} -----")
+        for chave, desc in item["opcoes"].items():
+            print(f"  {chave}: {desc}")
+
+        escolha = input("\nEscolha uma opção: ").strip()
+
+        if escolha == "0":
+            break
+        elif escolha == "1" or escolha == "[1]":
+            print("\n" + "=" * 60)
+            print(item["detalhes"]["[1]"])
+            print("=" * 60)
+            input("\nPressione ENTER para voltar...")
+        elif escolha == "2" or escolha == "[2]":
+            print("\n" + "=" * 60)
+            print(item["detalhes"]["[2]"])
+            print("=" * 60)
+            input("\nPressione ENTER para voltar...")
+        elif escolha == "3" or escolha == "[3]":
+            print("\n  Em breve — opção Admissão.")
+            input("\nPressione ENTER para voltar...")
+        else:
+            resposta = chamar_ia(escolha)
+            print(f"\n[IA Pink Chat]: {resposta}")
+            input("\nPressione ENTER para voltar...")
 
 
 def handle_produtos() -> None:
