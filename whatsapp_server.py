@@ -22,9 +22,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-# ConfiguraÃ§Ã£o de IA
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# Roteador de mensagens do Flask
+# Configurações de IA
+
 
 IA_PROVIDER  = os.getenv("IA_PROVIDER", "gemini").lower()
 
@@ -74,13 +74,11 @@ def _chamar_claude(pergunta: str) -> str:
         return response.content[0].text
     except Exception as e:
         logger.error("Claude: %s", e)
-        print(f"[ERRO CLAUDE] {e}", flush=True)
-        return "No momento só consigo responder pelas opções do menu (1 a 5)."
+        print(f"[ERRO CLAUDE] {type(e).__name__}: {e}", flush=True)
+        import traceback; traceback.print_exc()
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-# SessÃµes dos usuÃ¡rios
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# Sessões dos usuários
 
 sessoes: dict[str, dict] = {}
 
@@ -90,9 +88,7 @@ def obter_sessao(numero: str) -> dict:
     return sessoes[numero]
 
 
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-# ConteÃºdo estÃ¡tico
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# Conteúdo estático do bot
 
 MENU_PRINCIPAL = (
     "🌿 *ASSISTENTE VIRTUAL - SALVAR-SE*\n\n"
@@ -174,10 +170,7 @@ CONTEUDO = {
     ),
 }
 
-
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-# LÃ³gica de orÃ§amento via WhatsApp
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# Lógica de orçamento via Whatsapp
 
 def montar_catalogo() -> str:
     produtos = buscar_produtos()
@@ -216,11 +209,7 @@ def montar_resumo(sessao: dict) -> str:
     linhas.append(f"*TOTAL:             R$ {total_final:.2f}*")
     linhas.append("\nDigite *menu* para voltar ou *0* para encerrar.")
     return "\n".join(linhas)
-
-
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Roteador de mensagens
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def processar_mensagem(numero: str, texto: str) -> str:
     sessao = obter_sessao(numero)
@@ -237,7 +226,7 @@ def processar_mensagem(numero: str, texto: str) -> str:
         sessao["etapa"] = "menu"
         return "AtÃ© logo! ðŸŒ¿ Digite *menu* quando precisar."
 
-    # â”€â”€ MENU PRINCIPAL â”€â”€
+    # MENU PRINCIPAL 
     if etapa == "menu":
         if msg == "1":
             sessao["etapa"] = "cadastro"
@@ -250,7 +239,7 @@ def processar_mensagem(numero: str, texto: str) -> str:
         # Fallback IA
         return chamar_ia(texto)
 
-    # â”€â”€ CADASTRO â”€â”€
+    # CADASTRO 
     if etapa == "cadastro":
         if msg in ("1", "[1]"):
             return CONTEUDO["1.1"]
@@ -261,7 +250,7 @@ def processar_mensagem(numero: str, texto: str) -> str:
             return "OpÃ§Ã£o AdmissÃ£o em breve. Digite *0* para voltar ao menu."
         return MENU_PRINCIPAL
 
-    # â”€â”€ AGUARDANDO DADOS DE CADASTRO â”€â”€
+    # AGUARDANDO DADOS DE CADASTRO 
     if etapa == "aguardando_cadastro":
         sessao["etapa"] = "menu"
         return (
@@ -270,7 +259,7 @@ def processar_mensagem(numero: str, texto: str) -> str:
             "Digite *menu* para voltar ao menu principal."
         )
 
-    # â”€â”€ PRODUTOS â”€â”€
+    # PRODUTOS 
     if etapa == "produtos":
         produtos = buscar_produtos()
 
@@ -288,7 +277,8 @@ def processar_mensagem(numero: str, texto: str) -> str:
 
         return chamar_ia(texto)
 
-    # â”€â”€ QUANTIDADE â”€â”€
+    #  QUANTIDADE 
+
     if etapa.startswith("qtd_"):
         idx = int(etapa.split("_")[1])
         produtos = buscar_produtos()
@@ -313,10 +303,7 @@ def processar_mensagem(numero: str, texto: str) -> str:
     sessao["etapa"] = "menu"
     return MENU_PRINCIPAL
 
-
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Webhook Twilio
-# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route("/webhook", methods=["GET"])
 def webhook_ping():
