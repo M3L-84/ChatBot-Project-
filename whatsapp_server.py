@@ -61,7 +61,7 @@ def _chamar_gemini(pergunta: str) -> str:
 def _chamar_claude(pergunta: str) -> str:
     chave = os.getenv("ANTHROPIC_API_KEY")
     if not chave:
-        return "âš ï¸ ANTHROPIC_API_KEY nÃ£o encontrada."
+        return "âš ï¸ ANTHROPIC_API_KEY não encontrada."
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=chave)
@@ -74,7 +74,8 @@ def _chamar_claude(pergunta: str) -> str:
         return response.content[0].text
     except Exception as e:
         logger.error("Claude: %s", e)
-        return "No momento nÃ£o consigo responder. Digite *menu* para ver as opÃ§Ãµes."
+        print(f"[ERRO CLAUDE] {e}", flush=True)
+        return "No momento só consigo responder pelas opções do menu (1 a 5)."
 
 
 # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
