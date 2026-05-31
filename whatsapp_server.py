@@ -316,6 +316,10 @@ def processar_mensagem(numero: str, texto: str) -> str:
 # Webhook Twilio
 # ──────────────────────────────────────────────
 
+@app.route("/webhook", methods=["GET"])
+def webhook_ping():
+    return "OK", 200
+
 @app.route("/webhook", methods=["POST"])
 def webhook():
     numero  = request.form.get("From", "")
