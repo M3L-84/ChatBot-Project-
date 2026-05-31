@@ -332,4 +332,5 @@ def webhook():
 if __name__ == "__main__":
     print("🌿 *ASSISTENTE VIRTUAL — rodando na porta 5000")
     print("   Webhook: http://localhost:5000/webhook")
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
