@@ -53,8 +53,11 @@ def _chamar_gemini(pergunta: str) -> str:
             contents=f"{SYSTEM_PROMPT}\n\nPergunta: {pergunta}"
         )
         return response.text
-    except Exception as e:`n        logger.error("Gemini: %s", e)`n        print(f"[ERRO GEMINI] {e}", flush=True)`n        return "No momento nÃ£o consigo responder. Digite *menu* para ver as opÃ§Ãµes."
-
+    except Exception as e:
+        logger.error("Gemini: %s", e)
+        print(f"[ERRO GEMINI] {e}", flush=True)
+        return "No momento não consigo responder. Digite *menu* para ver as opções."
+    
 def _chamar_claude(pergunta: str) -> str:
     chave = os.getenv("ANTHROPIC_API_KEY")
     if not chave:
