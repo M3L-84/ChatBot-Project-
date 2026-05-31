@@ -94,16 +94,16 @@ def obter_sessao(numero: str) -> dict:
 # â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 MENU_PRINCIPAL = (
-    "ðŸŒ¿ *ASSISTENTE VIRTUAL â€” SALVAR-SE*\n\n"
+    "🌿 *ASSISTENTE VIRTUAL - SALVAR-SE*\n\n"
     "Como posso ajudar?\n\n"
     "*1.* Cadastro\n"
-    "*2.* Produtos e orÃ§amento\n"
+    "*2.* Produtos e orçamento\n"
     "*3.* Mensalidade\n"
     "*4.* Frete e rastreio\n"
     "*5.* Cancelamento\n"
     "*9.* Falar com atendente\n"
     "*0.* Encerrar\n\n"
-    "Digite o nÃºmero da opÃ§Ã£o ou sua dÃºvida."
+    "Digite o número da opção ou sua dúvida."
 )
 
 CONTEUDO = {
