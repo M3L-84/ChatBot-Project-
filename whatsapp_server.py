@@ -49,7 +49,7 @@ def _chamar_gemini(pergunta: str) -> str:
         from google import genai
         client = genai.Client(api_key=chave)
         response = client.models.generate_content(
-            model="gemini-1.5-flash",
+            model="gemini-2.0-flash",
             contents=f"{SYSTEM_PROMPT}\n\nPergunta: {pergunta}"
         )
         return response.text
