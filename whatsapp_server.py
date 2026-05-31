@@ -37,6 +37,18 @@ SYSTEM_PROMPT = (
 )
 
 def chamar_ia(pergunta: str) -> str:
+    if os.getenv("IA_ATIVA", "false").lower() != "true":
+        return (
+            "Não entendi sua mensagem. 😊\n\n"
+            "Use as opções do menu:\n"
+            "*1.* Cadastro\n"
+            "*2.* Produtos\n"
+            "*3.* Mensalidade\n"
+            "*4.* Frete\n"
+            "*5.* Cancelamento\n"
+            "*9.* Falar com atendente\n\n"
+            "Ou digite *menu* para ver tudo."
+        )
     if IA_PROVIDER == "anthropic":
         return _chamar_claude(pergunta)
     return _chamar_gemini(pergunta)
