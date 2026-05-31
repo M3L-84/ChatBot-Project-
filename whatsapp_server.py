@@ -7,7 +7,9 @@ import logging
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
+from modules.database.setup_db import SetupDB
 
+SetupDB().inicializar()
 load_dotenv()
 
 from modules.calculadora import buscar_produtos, CUPONS
