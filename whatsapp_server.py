@@ -1,4 +1,4 @@
-# whatsapp_server.py
+﻿# whatsapp_server.py
 # Servidor Flask + Twilio Sandbox para WhatsApp
 # Executar: python3.11 whatsapp_server.py
 
@@ -22,18 +22,18 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# ──────────────────────────────────────────────
-# Configuração de IA
-# ──────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ConfiguraÃ§Ã£o de IA
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 IA_PROVIDER  = os.getenv("IA_PROVIDER", "gemini").lower()
 
 SYSTEM_PROMPT = (
-    "Você é o assistente virtual da Salvar-se (Salvar). "
-    "Sua missão é ser acolhedor e informativo sobre Cannabis Medicinal. "
-    "Se não souber a resposta ou for algo complexo, oriente a falar com o suporte: "
+    "VocÃª Ã© o assistente virtual da Salvar-se (Salvar). "
+    "Sua missÃ£o Ã© ser acolhedor e informativo sobre Cannabis Medicinal. "
+    "Se nÃ£o souber a resposta ou for algo complexo, oriente a falar com o suporte: "
     "digite 9 para falar com um atendente. "
-    "Mantenha respostas curtas, claras e amigáveis."
+    "Mantenha respostas curtas, claras e amigÃ¡veis."
 )
 
 def chamar_ia(pergunta: str) -> str:
@@ -44,7 +44,7 @@ def chamar_ia(pergunta: str) -> str:
 def _chamar_gemini(pergunta: str) -> str:
     chave = os.getenv("GOOGLE_API_KEY")
     if not chave:
-        return "⚠️ GOOGLE_API_KEY não encontrada."
+        return "âš ï¸ GOOGLE_API_KEY nÃ£o encontrada."
     try:
         from google import genai
         client = genai.Client(api_key=chave)
@@ -53,14 +53,12 @@ def _chamar_gemini(pergunta: str) -> str:
             contents=f"{SYSTEM_PROMPT}\n\nPergunta: {pergunta}"
         )
         return response.text
-    except Exception as e:
-        logger.error("Gemini: %s", e)
-        return "No momento não consigo responder. Digite *menu* para ver as opções."
+    except Exception as e:`n        logger.error("Gemini: %s", e)`n        print(f"[ERRO GEMINI] {e}", flush=True)`n        return "No momento nÃ£o consigo responder. Digite *menu* para ver as opÃ§Ãµes."
 
 def _chamar_claude(pergunta: str) -> str:
     chave = os.getenv("ANTHROPIC_API_KEY")
     if not chave:
-        return "⚠️ ANTHROPIC_API_KEY não encontrada."
+        return "âš ï¸ ANTHROPIC_API_KEY nÃ£o encontrada."
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=chave)
@@ -73,12 +71,12 @@ def _chamar_claude(pergunta: str) -> str:
         return response.content[0].text
     except Exception as e:
         logger.error("Claude: %s", e)
-        return "No momento não consigo responder. Digite *menu* para ver as opções."
+        return "No momento nÃ£o consigo responder. Digite *menu* para ver as opÃ§Ãµes."
 
 
-# ──────────────────────────────────────────────
-# Sessões dos usuários
-# ──────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# SessÃµes dos usuÃ¡rios
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 sessoes: dict[str, dict] = {}
 
@@ -88,112 +86,112 @@ def obter_sessao(numero: str) -> dict:
     return sessoes[numero]
 
 
-# ──────────────────────────────────────────────
-# Conteúdo estático
-# ──────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# ConteÃºdo estÃ¡tico
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 MENU_PRINCIPAL = (
-    "🌿 *ASSISTENTE VIRTUAL — SALVAR-SE*\n\n"
+    "ðŸŒ¿ *ASSISTENTE VIRTUAL â€” SALVAR-SE*\n\n"
     "Como posso ajudar?\n\n"
     "*1.* Cadastro\n"
-    "*2.* Produtos e orçamento\n"
+    "*2.* Produtos e orÃ§amento\n"
     "*3.* Mensalidade\n"
     "*4.* Frete e rastreio\n"
     "*5.* Cancelamento\n"
     "*9.* Falar com atendente\n"
     "*0.* Encerrar\n\n"
-    "Digite o número da opção ou sua dúvida."
+    "Digite o nÃºmero da opÃ§Ã£o ou sua dÃºvida."
 )
 
 CONTEUDO = {
     "1": (
-        "📋 *CADASTRO*\n\n"
+        "ðŸ“‹ *CADASTRO*\n\n"
         "*1.* Passo a passo\n"
-        "*2.* Já sou cadastrado\n"
-        "*3.* Admissão\n"
+        "*2.* JÃ¡ sou cadastrado\n"
+        "*3.* AdmissÃ£o\n"
         "*0.* Voltar ao menu"
     ),
     "1.1": (
-        "📝 *PASSO A PASSO*\n\n"
+        "ðŸ“ *PASSO A PASSO*\n\n"
         "1. Acesse: https://acesso.salvar-se.org.br/AreaAssociados\n\n"
-        "2. Clique em *Cadastre-se* abaixo de 'Recuperar minha senha' e preencha o formulário.\n\n"
-        "3. Documentação necessária:\n"
-        "   • Receita médica (óleo e/ou flor)\n"
-        "   • Laudo médico\n"
-        "   • Comprovante de residência\n"
-        "   • RG\n"
-        "   • Termo de Ajuizamento (disponível no formulário)\n\n"
-        "4. Nossa equipe analisará seus documentos e, após aprovação, você se tornará associado.\n\n"
-        "5. Acesse a Área do Associado e consulte os produtos disponíveis.\n\n"
-        "6. Mensalidade: R$ 30,00/mês. Produtos a partir de R$ 210,00.\n"
-        "   Pagamento via PIX, cartão ou boleto.\n\n"
-        "7. Com a mensalidade em dia, adquira seus produtos na Área do Associado.\n\n"
-        "_Ficou com dúvidas? Digite *9* para falar com um atendente._\n\n"
+        "2. Clique em *Cadastre-se* abaixo de 'Recuperar minha senha' e preencha o formulÃ¡rio.\n\n"
+        "3. DocumentaÃ§Ã£o necessÃ¡ria:\n"
+        "   â€¢ Receita mÃ©dica (Ã³leo e/ou flor)\n"
+        "   â€¢ Laudo mÃ©dico\n"
+        "   â€¢ Comprovante de residÃªncia\n"
+        "   â€¢ RG\n"
+        "   â€¢ Termo de Ajuizamento (disponÃ­vel no formulÃ¡rio)\n\n"
+        "4. Nossa equipe analisarÃ¡ seus documentos e, apÃ³s aprovaÃ§Ã£o, vocÃª se tornarÃ¡ associado.\n\n"
+        "5. Acesse a Ãrea do Associado e consulte os produtos disponÃ­veis.\n\n"
+        "6. Mensalidade: R$ 30,00/mÃªs. Produtos a partir de R$ 210,00.\n"
+        "   Pagamento via PIX, cartÃ£o ou boleto.\n\n"
+        "7. Com a mensalidade em dia, adquira seus produtos na Ãrea do Associado.\n\n"
+        "_Ficou com dÃºvidas? Digite *9* para falar com um atendente._\n\n"
         "Digite *0* para voltar ao menu."
     ),
     "1.2": (
-        "Por gentileza, informe o nome, CPF ou número de associado para que "
-        "possamos localizar o seu cadastro e iniciar o processo de admissão.\n\n"
+        "Por gentileza, informe o nome, CPF ou nÃºmero de associado para que "
+        "possamos localizar o seu cadastro e iniciar o processo de admissÃ£o.\n\n"
         "Digite *0* para voltar ao menu."
     ),
     "3": (
-        "💳 *MENSALIDADE*\n\n"
-        "A mensalidade vence todo dia 10 de cada mês e o valor é de R$ 30,00. "
-        "É necessário estar com a mensalidade em dia para realizar pedidos. "
-        "Optamos pelo plano mensal com o objetivo de facilitar o acesso a todos os públicos.\n\n"
+        "ðŸ’³ *MENSALIDADE*\n\n"
+        "A mensalidade vence todo dia 10 de cada mÃªs e o valor Ã© de R$ 30,00. "
+        "Ã‰ necessÃ¡rio estar com a mensalidade em dia para realizar pedidos. "
+        "Optamos pelo plano mensal com o objetivo de facilitar o acesso a todos os pÃºblicos.\n\n"
         "Digite *menu* para voltar."
     ),
     "4": (
-        "🚚 *FRETE E RASTREIO*\n\n"
-        "O frete é calculado no momento da compra, ao escolher a transportadora. "
-        "O prazo para expedição é de até 5 dias úteis após a confirmação do pedido.\n\n"
+        "ðŸšš *FRETE E RASTREIO*\n\n"
+        "O frete Ã© calculado no momento da compra, ao escolher a transportadora. "
+        "O prazo para expediÃ§Ã£o Ã© de atÃ© 5 dias Ãºteis apÃ³s a confirmaÃ§Ã£o do pedido.\n\n"
         "*Status do pedido:*\n"
-        "Pago → Atendido → Em preparação → Expedido\n\n"
-        "Após 'Expedido', o código de rastreio é enviado para o seu e-mail. "
-        "Acompanhe em: Área do Associado › Pedidos.\n\n"
+        "Pago â†’ Atendido â†’ Em preparaÃ§Ã£o â†’ Expedido\n\n"
+        "ApÃ³s 'Expedido', o cÃ³digo de rastreio Ã© enviado para o seu e-mail. "
+        "Acompanhe em: Ãrea do Associado â€º Pedidos.\n\n"
         "*Transportadoras:*\n"
-        "• JADLOG (código iniciado em 18): https://www.jadlog.com.br/jadlog/captcha\n"
-        "• AZUL LOGÍSTICA (demais): https://www.azullogistica.com.br/Rastreio\n\n"
+        "â€¢ JADLOG (cÃ³digo iniciado em 18): https://www.jadlog.com.br/jadlog/captcha\n"
+        "â€¢ AZUL LOGÃSTICA (demais): https://www.azullogistica.com.br/Rastreio\n\n"
         "Digite *menu* para voltar."
     ),
     "5": (
-        "❌ *CANCELAMENTO*\n\n"
+        "âŒ *CANCELAMENTO*\n\n"
         "Envie um e-mail para contato@salvar-se.org.br com o assunto 'Cancelamento' e informe o motivo. "
-        "Após o envio, informe ao suporte, que executará o procedimento. "
-        "Não será cobrada multa ou taxa, independentemente de pendências. "
-        "O cancelamento só será executado caso não haja envios em trânsito.\n\n"
+        "ApÃ³s o envio, informe ao suporte, que executarÃ¡ o procedimento. "
+        "NÃ£o serÃ¡ cobrada multa ou taxa, independentemente de pendÃªncias. "
+        "O cancelamento sÃ³ serÃ¡ executado caso nÃ£o haja envios em trÃ¢nsito.\n\n"
         "Digite *menu* para voltar."
     ),
     "9": (
-        "👤 *FALAR COM ATENDENTE*\n\n"
-        "Nosso horário de atendimento é de segunda a sexta, das 9h às 19h.\n\n"
-        "Em breve você será direcionado a um atendente.\n\n"
+        "ðŸ‘¤ *FALAR COM ATENDENTE*\n\n"
+        "Nosso horÃ¡rio de atendimento Ã© de segunda a sexta, das 9h Ã s 19h.\n\n"
+        "Em breve vocÃª serÃ¡ direcionado a um atendente.\n\n"
         "Digite *menu* para voltar ao menu principal."
     ),
 }
 
 
-# ──────────────────────────────────────────────
-# Lógica de orçamento via WhatsApp
-# ──────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# LÃ³gica de orÃ§amento via WhatsApp
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def montar_catalogo() -> str:
     produtos = buscar_produtos()
     if not produtos:
-        return "⚠️ Produtos indisponíveis no momento."
-    linhas = ["🛍️ *PRODUTOS SALVAR-SE*\n"]
+        return "âš ï¸ Produtos indisponÃ­veis no momento."
+    linhas = ["ðŸ›ï¸ *PRODUTOS SALVAR-SE*\n"]
     for i, (nome, preco, _) in enumerate(produtos, 1):
-        linhas.append(f"*{i}.* {nome} — R$ {preco:.2f}")
-    linhas.append("\nDigite o número do produto para adicionar ao carrinho.")
+        linhas.append(f"*{i}.* {nome} â€” R$ {preco:.2f}")
+    linhas.append("\nDigite o nÃºmero do produto para adicionar ao carrinho.")
     linhas.append("Digite *r* para ver o resumo, *0* para finalizar ou *menu* para voltar.")
     return "\n".join(linhas)
 
 def montar_resumo(sessao: dict) -> str:
     carrinho = sessao["carrinho"]
     if not carrinho:
-        return "🛒 Carrinho vazio."
+        return "ðŸ›’ Carrinho vazio."
 
-    linhas = ["🧾 *RESUMO DO PEDIDO*\n"]
+    linhas = ["ðŸ§¾ *RESUMO DO PEDIDO*\n"]
     total_bruto = 0.0
     total_desconto = 0.0
 
@@ -202,7 +200,7 @@ def montar_resumo(sessao: dict) -> str:
         desconto  = subtotal * item["desconto"]
         total_bruto    += subtotal
         total_desconto += desconto
-        linhas.append(f"• {item['qtd']}x {item['nome']}")
+        linhas.append(f"â€¢ {item['qtd']}x {item['nome']}")
         linhas.append(f"  Subtotal: R$ {subtotal:.2f} | Desconto: R$ {desconto:.2f}")
 
     cupom_valor = total_bruto * CUPONS.get("salvar10", 0.0)
@@ -216,9 +214,9 @@ def montar_resumo(sessao: dict) -> str:
     return "\n".join(linhas)
 
 
-# ──────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Roteador de mensagens
-# ──────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def processar_mensagem(numero: str, texto: str) -> str:
     sessao = obter_sessao(numero)
@@ -226,16 +224,16 @@ def processar_mensagem(numero: str, texto: str) -> str:
     msg    = texto.strip().lower()
 
     # Comandos globais
-    if msg in ("menu", "oi", "olá", "ola", "inicio", "início"):
+    if msg in ("menu", "oi", "olÃ¡", "ola", "inicio", "inÃ­cio"):
         sessao["etapa"] = "menu"
         sessao["carrinho"] = []
         return MENU_PRINCIPAL
 
     if msg == "0":
         sessao["etapa"] = "menu"
-        return "Até logo! 🌿 Digite *menu* quando precisar."
+        return "AtÃ© logo! ðŸŒ¿ Digite *menu* quando precisar."
 
-    # ── MENU PRINCIPAL ──
+    # â”€â”€ MENU PRINCIPAL â”€â”€
     if etapa == "menu":
         if msg == "1":
             sessao["etapa"] = "cadastro"
@@ -248,7 +246,7 @@ def processar_mensagem(numero: str, texto: str) -> str:
         # Fallback IA
         return chamar_ia(texto)
 
-    # ── CADASTRO ──
+    # â”€â”€ CADASTRO â”€â”€
     if etapa == "cadastro":
         if msg in ("1", "[1]"):
             return CONTEUDO["1.1"]
@@ -256,19 +254,19 @@ def processar_mensagem(numero: str, texto: str) -> str:
             sessao["etapa"] = "aguardando_cadastro"
             return CONTEUDO["1.2"]
         if msg in ("3", "[3]"):
-            return "Opção Admissão em breve. Digite *0* para voltar ao menu."
+            return "OpÃ§Ã£o AdmissÃ£o em breve. Digite *0* para voltar ao menu."
         return MENU_PRINCIPAL
 
-    # ── AGUARDANDO DADOS DE CADASTRO ──
+    # â”€â”€ AGUARDANDO DADOS DE CADASTRO â”€â”€
     if etapa == "aguardando_cadastro":
         sessao["etapa"] = "menu"
         return (
             f"Obrigado! Recebemos seus dados: *{texto}*\n\n"
-            "Nossa equipe entrará em contato em breve. "
+            "Nossa equipe entrarÃ¡ em contato em breve. "
             "Digite *menu* para voltar ao menu principal."
         )
 
-    # ── PRODUTOS ──
+    # â”€â”€ PRODUTOS â”€â”€
     if etapa == "produtos":
         produtos = buscar_produtos()
 
@@ -280,13 +278,13 @@ def processar_mensagem(numero: str, texto: str) -> str:
             if 0 <= idx < len(produtos):
                 nome, preco, desconto = produtos[idx]
                 sessao["etapa"] = f"qtd_{idx}"
-                return f"Quantas unidades de *{nome}*? (máximo 6)"
+                return f"Quantas unidades de *{nome}*? (mÃ¡ximo 6)"
         except ValueError:
             pass
 
         return chamar_ia(texto)
 
-    # ── QUANTIDADE ──
+    # â”€â”€ QUANTIDADE â”€â”€
     if etapa.startswith("qtd_"):
         idx = int(etapa.split("_")[1])
         produtos = buscar_produtos()
@@ -300,21 +298,21 @@ def processar_mensagem(numero: str, texto: str) -> str:
                 })
                 sessao["etapa"] = "produtos"
                 return (
-                    f"✅ {qtd}x *{nome}* adicionado!\n\n"
+                    f"âœ… {qtd}x *{nome}* adicionado!\n\n"
                     + montar_catalogo()
                 )
-            return "⚠️ Quantidade entre 1 e 6. Tente novamente."
+            return "âš ï¸ Quantidade entre 1 e 6. Tente novamente."
         except ValueError:
-            return "⚠️ Digite apenas números."
+            return "âš ï¸ Digite apenas nÃºmeros."
 
     # Fallback geral
     sessao["etapa"] = "menu"
     return MENU_PRINCIPAL
 
 
-# ──────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Webhook Twilio
-# ──────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route("/webhook", methods=["GET"])
 def webhook_ping():
@@ -335,5 +333,5 @@ def webhook():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    print(f"🌿 ASSISTENTE VIRTUAL — rodando na porta {port}")
+    print(f"ðŸŒ¿ ASSISTENTE VIRTUAL â€” rodando na porta {port}")
     app.run(host="0.0.0.0", port=port)
