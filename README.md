@@ -2,7 +2,7 @@
 
 "Bot de atendimento para o Pink Chat com Menu e IA".
 
-# 🌸 Salvar Chat - Assistente Virtual Salvar-se
+# 🌿 _ASSISTENTE VIRTUAL - SALVAR-SE_
 
 O **Salvar Chat** é um chatbot híbrido desenvolvido em Python, focado no atendimento de pacientes de Cannabis Medicinal. O projeto combina lógica de menu estruturada, persistência de dados em SQLite e inteligência artificial generativa.
 
